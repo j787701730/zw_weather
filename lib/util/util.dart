@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-const pathName = 'https://free-api.heweather.net/s6/weather?key=c10ca07640754ec3878ff6df49399eaa&';
+const key  = '&key=c10ca07640754ec3878ff6df49399eaa';
 
 showADialog(context, msg) {
   showDialog(
@@ -24,11 +24,10 @@ showADialog(context, msg) {
 }
 
 ajax(String url, Object data, toast, sucFun, failFun, context) async {
-  print('$pathName$url');
   try {
     Response response;
     response = await Dio().get(
-      "$pathName$url",
+      "$url$key",
 //      data: data,
 //      options: new Options(
 ////            contentType: ContentType.parse("application/x-www-form-urlencoded"),
