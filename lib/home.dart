@@ -37,6 +37,16 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
     'spi': '防晒指数'
   };
 
+  Map weekday = {
+    1: '星期一',
+    2: '星期二',
+    3: '星期三',
+    4: '星期四',
+    5: '星期五',
+    6: '星期六',
+    7: '星期日',
+  };
+
   @override
   void initState() {
     // TODO: implement initState
@@ -44,6 +54,8 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
     _readCitys();
     print('init');
   }
+
+  DateTime date;
 
   _readCitys() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -92,60 +104,279 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                       child: ListView(
                         children: <Widget>[
                           Container(
-                            child: Text(weatherData['HeWeather6'][0]['basic']['location']),
+                            padding: EdgeInsets.only(top: 10),
+                            child: Center(
+                              child: Text(
+                                weatherData['HeWeather6'][0]['basic']['location'],
+                                style: TextStyle(fontSize: 34),
+                              ),
+                            ),
                           ),
                           Container(
-                            child: Text(weatherData['HeWeather6'][0]['now']['tmp'] + '℃'),
+                            child: Center(
+                              child: Text(
+                                weatherData['HeWeather6'][0]['now']['cond_txt'],
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
                           ),
                           Container(
-                            width: 100,
-                            height: 100,
+                            child: Center(
+                              child: Text(
+                                weatherData['HeWeather6'][0]['now']['tmp'] + '℃',
+                                style: TextStyle(fontSize: MediaQuery.of(context).size.width / 3),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.width / 3,
                             child: Image.network(
                               'https://cdn.heweather.com/cond_icon/${weatherData['HeWeather6'][0]['now']['cond_code']}.png',
                               fit: BoxFit.contain,
                             ),
                           ),
                           Container(
-                            child: Text(weatherData['HeWeather6'][0]['now']['cond_txt']),
+                            height: 1,
+                            color: Colors.black12,
+                          ),
+//                          Container(
+//                            height: 100,
+//                            child: ListView(
+//                              scrollDirection: Axis.horizontal,
+//                              children: weatherData['HeWeather6'][0]['daily_forecast'].map<Widget>((item) {
+//                                return (SizedBox(
+//                                  width: MediaQuery.of(context).size.width / 2,
+//                                  height: 100,
+//                                  child: Text('${weekday[DateTime.parse(item['date']).weekday]}'),
+//                                ));
+//                              }).toList(),
+//                            ),
+//                          ),
+                          Container(
+                            height: 90,
+                            child: ListView(
+                              children: weatherData['HeWeather6'][0]['daily_forecast'].map<Widget>((item) {
+                                return (Container(
+                                  height: 30,
+                                  child: Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Center(
+                                          child: Text('${weekday[DateTime.parse(item['date']).weekday]}'),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Image.network(
+                                              'https://cdn.heweather.com/cond_icon/${item['cond_code_d']}.png',
+                                              width: 20,
+                                              height: 20,
+                                            ),
+                                            Text(' - '),
+                                            Image.network(
+                                              'https://cdn.heweather.com/cond_icon/${item['cond_code_n']}.png',
+                                              width: 20,
+                                              height: 20,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text(item['tmp_max']),
+                                            Text('  '),
+                                            Text(item['tmp_min']),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ));
+                              }).toList(),
+                            ),
                           ),
                           Container(
-                            child: Text('体感温度' + weatherData['HeWeather6'][0]['now']['fl'] + '℃'),
+                            height: 1,
+                            color: Colors.black12,
                           ),
                           Container(
-                            child: Text('风向360角度' + weatherData['HeWeather6'][0]['now']['wind_deg']),
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Text(
+                                    '体感温度：',
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                                Text(weatherData['HeWeather6'][0]['now']['fl'] + '℃')
+                              ],
+                            ),
                           ),
                           Container(
-                            child: Text('风向' + weatherData['HeWeather6'][0]['now']['wind_dir']),
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Text(
+                                    '风向360角度：',
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                                Text(weatherData['HeWeather6'][0]['now']['wind_deg'])
+                              ],
+                            ),
                           ),
                           Container(
-                            child: Text('风力' + weatherData['HeWeather6'][0]['now']['wind_sc']),
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Text(
+                                    '风向：',
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                                Text(weatherData['HeWeather6'][0]['now']['wind_dir'])
+                              ],
+                            ),
                           ),
                           Container(
-                            child: Text('风速' + weatherData['HeWeather6'][0]['now']['wind_spd'] + '公里/小时'),
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Text(
+                                    '风力：',
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                                Text(weatherData['HeWeather6'][0]['now']['wind_sc'])
+                              ],
+                            ),
                           ),
                           Container(
-                            child: Text('相对湿度' + weatherData['HeWeather6'][0]['now']['hum'] + '%'),
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Text(
+                                    '风速：',
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                                Text(weatherData['HeWeather6'][0]['now']['wind_spd'] + '公里/小时')
+                              ],
+                            ),
                           ),
                           Container(
-                            child: Text('降水量' + weatherData['HeWeather6'][0]['now']['pcpn'] + 'mm'),
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Text(
+                                    '相对湿度：',
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                                Text(weatherData['HeWeather6'][0]['now']['hum'] + '%')
+                              ],
+                            ),
                           ),
                           Container(
-                            child: Text('云量' + weatherData['HeWeather6'][0]['now']['cloud']),
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Text(
+                                    '降水量：',
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                                Text(weatherData['HeWeather6'][0]['now']['pcpn'] + 'mm')
+                              ],
+                            ),
                           ),
                           Container(
-                            child: Text(
-                              '生活指数',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Text(
+                                    '云量：',
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                                Text(weatherData['HeWeather6'][0]['now']['cloud'])
+                              ],
+                            ),
+                          ),
+                          Container(
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Text(
+                                    '大气压强：',
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                                Text(weatherData['HeWeather6'][0]['now']['pres'] + '百帕')
+                              ],
+                            ),
+                          ),
+                          Container(
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Text(
+                                    '能见度：',
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                                Text(weatherData['HeWeather6'][0]['now']['vis'] + '公里')
+                              ],
+                            ),
+                          ),
+                          Container(
+                            height: 1,
+                            color: Colors.black12,
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(bottom: 6, top: 6),
+                            child: Center(
+                              child: Text(
+                                '生活指数',
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                           Column(
                             children: weatherData['HeWeather6'][0]['lifestyle'].map<Widget>((item) {
-                              return Wrap(
+                              return Column(
                                 children: <Widget>[
-                                  Text(lifeStyle[item['type']]),
-                                  Text(': '),
-                                  Text(item['brf']),
-                                  Text(item['txt']),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text('${lifeStyle[item['type']]}：${item['brf']}',style: TextStyle(
+                                        fontWeight: FontWeight.bold
+                                      ),),
+                                    ],
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.all(6),
+                                    child: Text(item['txt']),
+                                  ),
                                 ],
                               );
                             }).toList(),
