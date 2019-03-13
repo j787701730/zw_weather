@@ -11,9 +11,9 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   String query = '';
   DateTime _lastPressedAt;
-  List searchData = [
-    {'basic': null}
-  ];
+  List searchData = [];
+
+  List hotCity = [];
 
   queryChange(val) {
 //    print(val);
@@ -34,15 +34,37 @@ class _SearchState extends State<Search> {
     getData();
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+//    getHotCity();
+  }
+
   getData() {
     if (query.isEmpty) {
       return;
     }
     ajax('https://search.heweather.net/find?location=$query&group=cn&', '', false, (data) {
-      setState(() {
-        searchData = data['HeWeather6'];
-      });
+      if (!mounted) return;
+      if (data['HeWeather6'] != null && data['HeWeather6'][0] != null && data['HeWeather6'][0]['basic'] != null) {
+        setState(() {
+          searchData = data['HeWeather6'][0]['basic'];
+        });
+      }
     }, () {}, context);
+  }
+
+  getHotCity() {
+    ajax('https://search.heweather.net/top?group=cn&', '', false, (data) {
+      if (!mounted) return;
+      print(data);
+      if (data['HeWeather6'] != null && data['HeWeather6'][0] != null && data['HeWeather6'][0]['basic'] != null) {
+        setState(() {
+          hotCity = data['HeWeather6'][0]['basic'];
+        });
+      }
+    }, (data) {}, context);
   }
 
   _addCity(data) async {
@@ -96,12 +118,12 @@ class _SearchState extends State<Search> {
         )),
       ),
       body: SafeArea(
-        child: searchData[0]['basic'] == null
+        child: searchData.isEmpty
             ? Placeholder(
                 color: Colors.transparent,
               )
             : ListView(
-                children: searchData[0]['basic'].map<Widget>((item) {
+                children: searchData.map<Widget>((item) {
                   return (FlatButton(
                     onPressed: () {
                       _addCity(item['location']);
