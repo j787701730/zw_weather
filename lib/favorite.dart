@@ -49,6 +49,7 @@ class _FavoriteState extends State<Favorite> {
           '关注',
           style: TextStyle(color: Colors.black),
         ),
+        centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(
@@ -86,7 +87,15 @@ class _FavoriteState extends State<Favorite> {
                         _addCityF(item);
                         Navigator.of(context).pop(item);
                       },
-                      title: Text(item),
+                      title: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.star,
+                            color: Colors.black38,
+                          ),
+                          Text(' $item')
+                        ],
+                      ),
 //                        subtitle: new Text('SlidableDrawerDelegate'),
                     ),
 //                actions: <Widget>[

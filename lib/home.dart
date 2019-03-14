@@ -120,25 +120,26 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                             child: Center(
                               child: Text(
                                 weatherData['HeWeather6'][0]['now']['tmp'] + '℃',
-                                style: TextStyle(fontSize: MediaQuery.of(context).size.width / 3),
+                                style: TextStyle(fontSize: MediaQuery.of(context).size.width / 4),
                               ),
                             ),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width / 3,
-                            height: MediaQuery.of(context).size.width / 3,
+                            width: MediaQuery.of(context).size.width / 4,
+                            height: MediaQuery.of(context).size.width / 4,
                             child: Image.asset(
                               'icons/${weatherData['HeWeather6'][0]['now']['cond_code']}.png',
                               fit: BoxFit.contain,
                             ),
                           ),
                           Container(
+                            padding: EdgeInsets.only(bottom: 4),
                             child: Row(
                               children: <Widget>[
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width / 2,
                                   child: Container(
-                                    padding: EdgeInsets.only(left: 24),
+                                    padding: EdgeInsets.only(left: 20),
                                     child: Row(
                                       children: <Widget>[
 //                                      data['HeWeather6'][0]['daily_forecast']
@@ -154,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width / 2,
                                   child: Container(
-                                    padding: EdgeInsets.only(right: 24),
+                                    padding: EdgeInsets.only(right: 20),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: <Widget>[
@@ -184,29 +185,40 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                               scrollDirection: Axis.horizontal,
                               children: weatherData['HeWeather6'][0]['hourly'].map<Widget>((item) {
                                 return (SizedBox(
-                                  width: 80,
+                                  width: 70,
                                   child: Column(
                                     children: <Widget>[
-                                      Center(
-                                        child: Text('${DateTime.parse(item['time']).hour}时'),
-                                      ),
-                                      Center(
-                                        child: Column(
-                                          children: <Widget>[
-                                            Text(
-                                              item['pop'] == '0' ? '' : '${item['pop']}%',
-                                              style: TextStyle(fontSize: 10),
-                                            ),
-                                            Image.asset(
-                                              'icons/${item['cond_code']}.png',
-                                              width: 20,
-                                              height: 20,
-                                            )
-                                          ],
+                                      Container(
+                                        height: 22,
+                                        child: Center(
+                                          child: Text('${DateTime.parse(item['time']).hour}时'),
                                         ),
                                       ),
-                                      Center(
-                                        child: Text('${item['tmp']}'),
+                                      Container(
+                                        height: 36,
+                                        child: Center(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(
+                                                item['pop'] == '0' ? '' : '${item['pop']}%',
+                                                style: TextStyle(fontSize: 10),
+                                              ),
+                                              Image.asset(
+                                                'icons/${item['cond_code']}.png',
+                                                width: 20,
+                                                height: 20,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        child: Center(
+                                          child: Text('${item['tmp']}'),
+                                        ),
                                       )
                                     ],
                                   ),
@@ -230,7 +242,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                           SizedBox(
                                             width: MediaQuery.of(context).size.width / 3,
                                             child: Container(
-                                              padding: EdgeInsets.only(left: 24),
+                                              padding: EdgeInsets.only(left: 20),
                                               child: Text('${weekday[DateTime.parse(item['date']).weekday]}'),
                                             ),
                                           ),
@@ -263,7 +275,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                                 Text('  '),
                                                 Text(item['tmp_min']),
                                                 SizedBox(
-                                                  width: 24,
+                                                  width: 20,
                                                 )
                                               ],
                                             ),
@@ -278,11 +290,18 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                   color: Colors.black12,
                                 ),
                                 Container(
-                                  child: Center(
-                                    child: Text('今日天气', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                  ),
+                                  padding: EdgeInsets.only(top: 4, left: 20, right: 20, bottom: 4),
+                                  child: Text('今天：当前${weatherData['HeWeather6'][0]['now']['cond_txt']}。气温'
+                                      '${weatherData['HeWeather6'][0]['now']['tmp']}℃；'
+                                      '预计最高气温${weatherData['HeWeather6'][0]['daily_forecast'][0]['tmp_max']}℃，'
+                                      '最低气温${weatherData['HeWeather6'][0]['daily_forecast'][0]['tmp_min']}℃。',),
                                 ),
                                 Container(
+                                  height: 1,
+                                  color: Colors.black12,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(top: 4),
                                   child: Row(
                                     children: <Widget>[
                                       SizedBox(
@@ -306,7 +325,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                           textAlign: TextAlign.right,
                                         ),
                                       ),
-                                      Text(weatherData['HeWeather6'][0]['now']['wind_deg'])
+                                      Text('${weatherData['HeWeather6'][0]['now']['wind_deg']}度')
                                     ],
                                   ),
                                 ),
@@ -334,7 +353,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                           textAlign: TextAlign.right,
                                         ),
                                       ),
-                                      Text(weatherData['HeWeather6'][0]['now']['wind_sc'])
+                                      Text('${weatherData['HeWeather6'][0]['now']['wind_sc']}级')
                                     ],
                                   ),
                                 ),
@@ -409,6 +428,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                   ),
                                 ),
                                 Container(
+                                  padding: EdgeInsets.only(bottom: 4),
                                   child: Row(
                                     children: <Widget>[
                                       SizedBox(
@@ -427,7 +447,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                   color: Colors.black12,
                                 ),
                                 Container(
-                                  padding: EdgeInsets.only(bottom: 6, top: 6),
+                                  padding: EdgeInsets.only(bottom: 10, top: 6),
                                   child: Center(
                                     child: Text(
                                       '生活指数',
@@ -453,7 +473,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                           children: <Widget>[
                                             Container(
                                               width: MediaQuery.of(context).size.width,
-                                              padding: EdgeInsets.only(top: 6, bottom: 6, left: 10, right: 10),
+                                              padding: EdgeInsets.only(top: 6, bottom: 10, left: 20, right: 20),
                                               child: Text(
                                                 item['txt'],
                                                 textAlign: TextAlign.justify,
@@ -472,7 +492,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                       padding: EdgeInsets.only(right: 20, top: 8, bottom: 8),
                                       child: Text(
                                         '数据来源于和风天气',
-                                        style: TextStyle(color: Colors.black38),
+                                        style: TextStyle(color: Colors.black38,fontSize: 12),
                                       ),
                                     )
                                   ],
@@ -501,6 +521,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                               width: MediaQuery.of(context).size.width / 3,
                               child: Center(
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[Icon(Icons.refresh), Text('刷新')],
                                 ),
                               ),
@@ -523,6 +544,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                               width: MediaQuery.of(context).size.width / 3,
                               child: Center(
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[Icon(Icons.search), Text('搜索')],
                                 ),
                               ),
@@ -545,6 +567,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                               width: MediaQuery.of(context).size.width / 3,
                               child: Center(
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[Icon(Icons.star), Text('关注')],
                                 ),
                               ),

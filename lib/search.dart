@@ -137,7 +137,9 @@ class _SearchState extends State<Search> {
                         _addCity(item['location']);
                         Navigator.of(context).pop(item['location']);
                       },
-                      title: Text(item['location']),
+                      title: Row(
+                        children: <Widget>[Icon(Icons.search,color: Colors.black38,), Text(' ${item['location']}')],
+                      ),
                     ));
                   }).toList(),
                 ),
