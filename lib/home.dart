@@ -448,14 +448,35 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                             ),
                                           ],
                                         ),
-                                        Container(
-                                          padding: EdgeInsets.all(6),
-                                          child: Text(item['txt']),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            Container(
+                                              width: MediaQuery.of(context).size.width,
+                                              padding: EdgeInsets.only(top: 6, bottom: 6, left: 10, right: 10),
+                                              child: Text(
+                                                item['txt'],
+                                                textAlign: TextAlign.justify,
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       ],
                                     );
                                   }).toList(),
                                 ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    Container(
+                                      padding: EdgeInsets.only(right: 20, top: 8, bottom: 8),
+                                      child: Text(
+                                        '数据来源于和风天气',
+                                        style: TextStyle(color: Colors.black38),
+                                      ),
+                                    )
+                                  ],
+                                )
                               ],
                             ),
                           ),
