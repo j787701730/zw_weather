@@ -472,52 +472,61 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width / 3,
-                            child: Center(
-                              child: FlatButton(
-                                  onPressed: () {
+                          InkWell(
+                            onTap: () {
+                              getWeather();
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width / 3,
+                              child: Center(
+                                child: Column(
+                                  children: <Widget>[Icon(Icons.refresh), Text('刷新')],
+                                ),
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) {
+                                return new Search();
+                              })).then((res) {
+                                if (res != null) {
+                                  setState(() {
+                                    location = res;
                                     getWeather();
-                                  },
-                                  child: Text('刷新')),
+                                  });
+                                }
+                              });
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width / 3,
+                              child: Center(
+                                child: Column(
+                                  children: <Widget>[Icon(Icons.search), Text('搜索')],
+                                ),
+                              ),
                             ),
                           ),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 3,
-                            child: Center(
-                              child: FlatButton(
-                                  onPressed: () {
-                                    Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) {
-                                      return new Search();
-                                    })).then((res) {
-                                      if (res != null) {
-                                        setState(() {
-                                          location = res;
-                                          getWeather();
-                                        });
-                                      }
-                                    });
-                                  },
-                                  child: Text('搜索')),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 3,
-                            child: Center(
-                              child: FlatButton(
-                                  onPressed: () {
-                                    Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) {
-                                      return new Favorite();
-                                    })).then((res) {
-                                      if (res != null) {
-                                        setState(() {
-                                          location = res;
-                                          getWeather();
-                                        });
-                                      }
-                                    });
-                                  },
-                                  child: Text('关注')),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) {
+                                return new Favorite();
+                              })).then((res) {
+                                if (res != null) {
+                                  setState(() {
+                                    location = res;
+                                    getWeather();
+                                  });
+                                }
+                              });
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width / 3,
+                              child: Center(
+                                child: Column(
+                                  children: <Widget>[Icon(Icons.star), Text('关注')],
+                                ),
+                              ),
                             ),
                           )
                         ],
