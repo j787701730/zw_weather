@@ -76,22 +76,18 @@ class _FavoriteState extends State<Favorite> {
                   return (Slidable(
                     delegate: new SlidableDrawerDelegate(),
                     actionExtentRatio: 0.25,
-                    child: new Container(
-                      color: Colors.white,
-                      child: new ListTile(
+                    child: ListTile(
 //                        leading: new CircleAvatar(
 //                          backgroundColor: Colors.indigoAccent,
 //                          child: new Text('3'),
 //                          foregroundColor: Colors.white,
 //                        ),
-                        title: FlatButton(
-                            onPressed: () {
-                              _addCityF(item);
-                              Navigator.of(context).pop(item);
-                            },
-                            child: new Text(item)),
+                      onTap: () {
+                        _addCityF(item);
+                        Navigator.of(context).pop(item);
+                      },
+                      title: Text(item),
 //                        subtitle: new Text('SlidableDrawerDelegate'),
-                      ),
                     ),
 //                actions: <Widget>[
 //                  new IconSlideAction(

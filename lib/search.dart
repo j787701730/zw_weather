@@ -13,7 +13,7 @@ class _SearchState extends State<Search> {
   DateTime _lastPressedAt;
   List searchData = [];
 
-  List hotCity = [];
+  List hotCity = ['北京', '杭州', '上海', '深圳', '广州', '苏州', '南京', '西安', '武汉', '重庆', '福州', '厦门'];
 
   queryChange(val) {
 //    print(val);
@@ -38,7 +38,6 @@ class _SearchState extends State<Search> {
   void initState() {
     // TODO: implement initState
     super.initState();
-//    getHotCity();
   }
 
   getData() {
@@ -53,18 +52,6 @@ class _SearchState extends State<Search> {
         });
       }
     }, () {}, context);
-  }
-
-  getHotCity() {
-    ajax('https://search.heweather.net/top?group=cn&', '', false, (data) {
-      if (!mounted) return;
-      print(data);
-      if (data['HeWeather6'] != null && data['HeWeather6'][0] != null && data['HeWeather6'][0]['basic'] != null) {
-        setState(() {
-          hotCity = data['HeWeather6'][0]['basic'];
-        });
-      }
-    }, (data) {}, context);
   }
 
   _addCity(data) async {
@@ -118,22 +105,44 @@ class _SearchState extends State<Search> {
         )),
       ),
       body: SafeArea(
-        child: searchData.isEmpty
-            ? Placeholder(
-                color: Colors.transparent,
-              )
-            : ListView(
-                children: searchData.map<Widget>((item) {
-                  return (FlatButton(
-                    onPressed: () {
-                      _addCity(item['location']);
-                      Navigator.of(context).pop(item['location']);
-                    },
-                    child: Text(item['location']),
-                  ));
-                }).toList(),
-              ),
-      ),
+          child: ListView(
+        children: <Widget>[
+          Container(
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.center,
+              children: hotCity.map<Widget>((item) {
+                return (SizedBox(
+                  width: MediaQuery.of(context).size.width / 4,
+                  child: FlatButton(
+                      onPressed: () {
+                        _addCity(item);
+                        Navigator.of(context).pop(item);
+                      },
+                      child: Text(item)),
+                ));
+              }).toList(),
+            ),
+          ),
+          searchData.isEmpty
+              ? Placeholder(
+                  color: Colors.transparent,
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: searchData.map<Widget>((item) {
+                    return (ListTile(
+                      onTap: () {
+                        _addCity(item['location']);
+                        Navigator.of(context).pop(item['location']);
+                      },
+                      title: Text(item['location']),
+                    ));
+                  }).toList(),
+                ),
+        ],
+      )),
     );
   }
 }
