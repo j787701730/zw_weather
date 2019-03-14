@@ -75,10 +75,8 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
     setState(() {
       weatherData = {};
     });
-    print('ajax');
     ajax('https://free-api.heweather.net/s6/weather?location=$location&', '', false, (data) {
       if (!mounted) return;
-
       if (data['HeWeather6'] != null && data['HeWeather6'][0] != null) {
         setState(() {
           weatherData = data;
@@ -129,8 +127,8 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                           Container(
                             width: MediaQuery.of(context).size.width / 3,
                             height: MediaQuery.of(context).size.width / 3,
-                            child: Image.network(
-                              'https://cdn.heweather.com/cond_icon/${weatherData['HeWeather6'][0]['now']['cond_code']}.png',
+                            child: Image.asset(
+                              'icons/${weatherData['HeWeather6'][0]['now']['cond_code']}.png',
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -195,9 +193,12 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                       Center(
                                         child: Column(
                                           children: <Widget>[
-                                            Text('${item['pop']}%'),
-                                            Image.network(
-                                              'https://cdn.heweather.com/cond_icon/${item['cond_code']}.png',
+                                            Text(
+                                              item['pop'] == '0' ? '' : '${item['pop']}%',
+                                              style: TextStyle(fontSize: 10),
+                                            ),
+                                            Image.asset(
+                                              'icons/${item['cond_code']}.png',
                                               width: 20,
                                               height: 20,
                                             )
@@ -228,7 +229,8 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                         children: <Widget>[
                                           SizedBox(
                                             width: MediaQuery.of(context).size.width / 3,
-                                            child: Center(
+                                            child: Container(
+                                              padding: EdgeInsets.only(left: 24),
                                               child: Text('${weekday[DateTime.parse(item['date']).weekday]}'),
                                             ),
                                           ),
@@ -238,14 +240,14 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: <Widget>[
-                                                Image.network(
-                                                  'https://cdn.heweather.com/cond_icon/${item['cond_code_d']}.png',
+                                                Image.asset(
+                                                  'icons/${item['cond_code_d']}.png',
                                                   width: 20,
                                                   height: 20,
                                                 ),
                                                 Text(' - '),
-                                                Image.network(
-                                                  'https://cdn.heweather.com/cond_icon/${item['cond_code_n']}.png',
+                                                Image.asset(
+                                                  'icons/${item['cond_code_n']}.png',
                                                   width: 20,
                                                   height: 20,
                                                 ),
@@ -255,11 +257,14 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                                           SizedBox(
                                             width: MediaQuery.of(context).size.width / 3,
                                             child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment.end,
                                               children: <Widget>[
                                                 Text(item['tmp_max']),
                                                 Text('  '),
                                                 Text(item['tmp_min']),
+                                                SizedBox(
+                                                  width: 24,
+                                                )
                                               ],
                                             ),
                                           )
