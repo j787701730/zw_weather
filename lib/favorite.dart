@@ -44,6 +44,27 @@ class _FavoriteState extends State<Favorite> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '关注',
+          style: TextStyle(color: Colors.black),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.blue,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        bottom: PreferredSize(
+            child: Container(
+          height: 1,
+          color: Colors.black26,
+        )),
+      ),
       body: SafeArea(
           child: Container(
         child: citysData.isEmpty

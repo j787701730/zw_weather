@@ -218,8 +218,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                             color: Colors.black12,
                           ),
                           Container(
-                            height: MediaQuery.of(context).size.height,
-                            child: ListView(
+                            child: Column(
                               children: <Widget>[
                                 Column(
                                   children: daily_forecast.map<Widget>((item) {
