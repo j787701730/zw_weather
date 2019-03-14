@@ -18,6 +18,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
   String location = '福州';
 
   Map weatherData = {};
+  List daily_forecast = [];
   Map lifeStyle = {
     'comf': '舒适度指数',
     'cw': '洗车指数',
@@ -52,10 +53,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
     // TODO: implement initState
     super.initState();
     _readCitys();
-    print('init');
   }
-
-  DateTime date;
 
   _readCitys() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -80,11 +78,11 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
     print('ajax');
     ajax('https://free-api.heweather.net/s6/weather?location=$location&', '', false, (data) {
       if (!mounted) return;
-      print(data);
 
       if (data['HeWeather6'] != null && data['HeWeather6'][0] != null) {
         setState(() {
           weatherData = data;
+          daily_forecast = data['HeWeather6'][0]['daily_forecast'].sublist(1);
         });
       }
     }, (data) {}, context);
@@ -137,66 +135,77 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                             ),
                           ),
                           Container(
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 2,
+                                  child: Container(
+                                    padding: EdgeInsets.only(left: 24),
+                                    child: Row(
+                                      children: <Widget>[
+//                                      data['HeWeather6'][0]['daily_forecast']
+                                        Text(
+                                          '${weekday[DateTime.parse(weatherData['HeWeather6'][0]['daily_forecast'][0]['date']).weekday]}',
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(' 今日')
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 2,
+                                  child: Container(
+                                    padding: EdgeInsets.only(right: 24),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: <Widget>[
+//                                      data['HeWeather6'][0]['daily_forecast']
+                                        Text(
+                                          '${weatherData['HeWeather6'][0]['daily_forecast'][0]['tmp_max']}  ',
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          '${weatherData['HeWeather6'][0]['daily_forecast'][0]['tmp_min']}',
+                                          style: TextStyle(color: Colors.black54),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
                             height: 1,
                             color: Colors.black12,
                           ),
-//                          Container(
-//                            height: 100,
-//                            child: ListView(
-//                              scrollDirection: Axis.horizontal,
-//                              children: weatherData['HeWeather6'][0]['daily_forecast'].map<Widget>((item) {
-//                                return (SizedBox(
-//                                  width: MediaQuery.of(context).size.width / 2,
-//                                  height: 100,
-//                                  child: Text('${weekday[DateTime.parse(item['date']).weekday]}'),
-//                                ));
-//                              }).toList(),
-//                            ),
-//                          ),
                           Container(
-                            height: 90,
+                            height: 80,
                             child: ListView(
-                              children: weatherData['HeWeather6'][0]['daily_forecast'].map<Widget>((item) {
-                                return (Container(
-                                  height: 30,
-                                  child: Row(
+                              scrollDirection: Axis.horizontal,
+                              children: weatherData['HeWeather6'][0]['hourly'].map<Widget>((item) {
+                                return (SizedBox(
+                                  width: 80,
+                                  child: Column(
                                     children: <Widget>[
-                                      SizedBox(
-                                        width: MediaQuery.of(context).size.width / 3,
-                                        child: Center(
-                                          child: Text('${weekday[DateTime.parse(item['date']).weekday]}'),
-                                        ),
+                                      Center(
+                                        child: Text('${DateTime.parse(item['time']).hour}时'),
                                       ),
-                                      SizedBox(
-                                        width: MediaQuery.of(context).size.width / 3,
-                                        child: Row(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                      Center(
+                                        child: Column(
                                           children: <Widget>[
+                                            Text('${item['pop']}%'),
                                             Image.network(
-                                              'https://cdn.heweather.com/cond_icon/${item['cond_code_d']}.png',
+                                              'https://cdn.heweather.com/cond_icon/${item['cond_code']}.png',
                                               width: 20,
                                               height: 20,
-                                            ),
-                                            Text(' - '),
-                                            Image.network(
-                                              'https://cdn.heweather.com/cond_icon/${item['cond_code_n']}.png',
-                                              width: 20,
-                                              height: 20,
-                                            ),
+                                            )
                                           ],
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: MediaQuery.of(context).size.width / 3,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(item['tmp_max']),
-                                            Text('  '),
-                                            Text(item['tmp_min']),
-                                          ],
-                                        ),
+                                      Center(
+                                        child: Text('${item['tmp']}'),
                                       )
                                     ],
                                   ),
@@ -209,177 +218,242 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
                             color: Colors.black12,
                           ),
                           Container(
-                            child: Row(
+                            height: MediaQuery.of(context).size.height,
+                            child: ListView(
                               children: <Widget>[
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  child: Text(
-                                    '体感温度：',
-                                    textAlign: TextAlign.right,
+                                Column(
+                                  children: daily_forecast.map<Widget>((item) {
+                                    return (Container(
+                                      height: 30,
+                                      child: Row(
+                                        children: <Widget>[
+                                          SizedBox(
+                                            width: MediaQuery.of(context).size.width / 3,
+                                            child: Center(
+                                              child: Text('${weekday[DateTime.parse(item['date']).weekday]}'),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: MediaQuery.of(context).size.width / 3,
+                                            child: Row(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Image.network(
+                                                  'https://cdn.heweather.com/cond_icon/${item['cond_code_d']}.png',
+                                                  width: 20,
+                                                  height: 20,
+                                                ),
+                                                Text(' - '),
+                                                Image.network(
+                                                  'https://cdn.heweather.com/cond_icon/${item['cond_code_n']}.png',
+                                                  width: 20,
+                                                  height: 20,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: MediaQuery.of(context).size.width / 3,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text(item['tmp_max']),
+                                                Text('  '),
+                                                Text(item['tmp_min']),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ));
+                                  }).toList(),
+                                ),
+                                Container(
+                                  height: 1,
+                                  color: Colors.black12,
+                                ),
+                                Container(
+                                  child: Center(
+                                    child: Text('今日天气', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                                   ),
                                 ),
-                                Text(weatherData['HeWeather6'][0]['now']['fl'] + '℃')
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  child: Text(
-                                    '风向360角度：',
-                                    textAlign: TextAlign.right,
-                                  ),
-                                ),
-                                Text(weatherData['HeWeather6'][0]['now']['wind_deg'])
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  child: Text(
-                                    '风向：',
-                                    textAlign: TextAlign.right,
-                                  ),
-                                ),
-                                Text(weatherData['HeWeather6'][0]['now']['wind_dir'])
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  child: Text(
-                                    '风力：',
-                                    textAlign: TextAlign.right,
-                                  ),
-                                ),
-                                Text(weatherData['HeWeather6'][0]['now']['wind_sc'])
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  child: Text(
-                                    '风速：',
-                                    textAlign: TextAlign.right,
-                                  ),
-                                ),
-                                Text(weatherData['HeWeather6'][0]['now']['wind_spd'] + '公里/小时')
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  child: Text(
-                                    '相对湿度：',
-                                    textAlign: TextAlign.right,
-                                  ),
-                                ),
-                                Text(weatherData['HeWeather6'][0]['now']['hum'] + '%')
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  child: Text(
-                                    '降水量：',
-                                    textAlign: TextAlign.right,
-                                  ),
-                                ),
-                                Text(weatherData['HeWeather6'][0]['now']['pcpn'] + 'mm')
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  child: Text(
-                                    '云量：',
-                                    textAlign: TextAlign.right,
-                                  ),
-                                ),
-                                Text(weatherData['HeWeather6'][0]['now']['cloud'])
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  child: Text(
-                                    '大气压强：',
-                                    textAlign: TextAlign.right,
-                                  ),
-                                ),
-                                Text(weatherData['HeWeather6'][0]['now']['pres'] + '百帕')
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  child: Text(
-                                    '能见度：',
-                                    textAlign: TextAlign.right,
-                                  ),
-                                ),
-                                Text(weatherData['HeWeather6'][0]['now']['vis'] + '公里')
-                              ],
-                            ),
-                          ),
-                          Container(
-                            height: 1,
-                            color: Colors.black12,
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(bottom: 6, top: 6),
-                            child: Center(
-                              child: Text(
-                                '生活指数',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          Column(
-                            children: weatherData['HeWeather6'][0]['lifestyle'].map<Widget>((item) {
-                              return Column(
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                Container(
+                                  child: Row(
                                     children: <Widget>[
-                                      Text('${lifeStyle[item['type']]}：${item['brf']}',style: TextStyle(
-                                        fontWeight: FontWeight.bold
-                                      ),),
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Text(
+                                          '体感温度：',
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                      Text(weatherData['HeWeather6'][0]['now']['fl'] + '℃')
                                     ],
                                   ),
-                                  Container(
-                                    padding: EdgeInsets.all(6),
-                                    child: Text(item['txt']),
+                                ),
+                                Container(
+                                  child: Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Text(
+                                          '风向360角度：',
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                      Text(weatherData['HeWeather6'][0]['now']['wind_deg'])
+                                    ],
                                   ),
-                                ],
-                              );
-                            }).toList(),
+                                ),
+                                Container(
+                                  child: Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Text(
+                                          '风向：',
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                      Text(weatherData['HeWeather6'][0]['now']['wind_dir'])
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  child: Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Text(
+                                          '风力：',
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                      Text(weatherData['HeWeather6'][0]['now']['wind_sc'])
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  child: Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Text(
+                                          '风速：',
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                      Text(weatherData['HeWeather6'][0]['now']['wind_spd'] + '公里/小时')
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  child: Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Text(
+                                          '相对湿度：',
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                      Text(weatherData['HeWeather6'][0]['now']['hum'] + '%')
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  child: Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Text(
+                                          '降水量：',
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                      Text(weatherData['HeWeather6'][0]['now']['pcpn'] + 'mm')
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  child: Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Text(
+                                          '云量：',
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                      Text(weatherData['HeWeather6'][0]['now']['cloud'])
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  child: Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Text(
+                                          '大气压强：',
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                      Text(weatherData['HeWeather6'][0]['now']['pres'] + '百帕')
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  child: Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: Text(
+                                          '能见度：',
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                      Text(weatherData['HeWeather6'][0]['now']['vis'] + '公里')
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  height: 1,
+                                  color: Colors.black12,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(bottom: 6, top: 6),
+                                  child: Center(
+                                    child: Text(
+                                      '生活指数',
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                                Column(
+                                  children: weatherData['HeWeather6'][0]['lifestyle'].map<Widget>((item) {
+                                    return Column(
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text(
+                                              '${lifeStyle[item['type']]}：${item['brf']}',
+                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.all(6),
+                                          child: Text(item['txt']),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
